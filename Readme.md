@@ -2,6 +2,18 @@
 
 ## Description
 
+The goal of this project is to encourage the growth of participatory democracy in Malaysia through
+the innovative use of web/mobile-based technologies for interaction between local councilors and citizens.
+Through this system, local councils will better monitor and resolve problems faced by the citizens;
+whereas for the citizens they will be able to engage with the councilors and participate in the decision
+making process of local councils.
+
 ## Authors
 
-[Feedgeorge](https://github.com/feedgeorge)
+Feedgeorge -
+[Github](https://github.com/feedgeorge) |
+[Web](http://www.feedgeorge.com) |
+[Mobile Apps](http://mobile.feedgeorge.com) |
+[Facebook](http://facebook.feedgeorge.com) |
+[Twitter](http://twitter.feedgeorge.com) |
+[Google+](http://gplus.feedgeorge.com)
