@@ -8,6 +8,8 @@ Through this system, local councils will better monitor and resolve problems fac
 whereas for the citizens they will be able to engage with the councilors and participate in the decision
 making process of local councils.
 
+The current system is designed with Feedgeorge API. You can develop your own API for your needs. In case you need Feedgeorge API, you can apply from support@feedgeorge.com
+
 ## Authors
 
 Feedgeorge -
