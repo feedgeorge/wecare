@@ -1,0 +1,112 @@
+<?php
+/* Home page */
+//is_login();
+//is_logined();
+get_header('','Create Group');
+
+?>
+	
+	<div id="primary">
+
+	<div id="onecontainer" >
+		<form id="groupform" name="groupform" class="groupform" action="" method="post">
+            <h1>Create Group</h1>
+			<input type="hidden" id="gppoly" name="gppoly" />
+			<input type="hidden" id="gplat" name="gplat" />
+			<input type="hidden" id="gplng" name="gplng" />
+			<fieldset>
+					
+					<label>Group Name</label> <input type="text" name="gpname" id="gpname" />
+					<label>Description</label> <textarea id="gpdesc" name="gpdesc" /></textarea>
+					
+                    <label>Group Boundary</label>
+                    Click on the map to start drawing
+					<div id="gpmap" class="wcmap_large fgmap" style="width:100%">
+					<script>
+						var gpmap = new WCMAP('gpmap','gp',true,{'drawpoly':true});
+					</script>
+					loading ... 
+					</div>
+                    <label>Website URL</label> <input type="text" name="gpweb" id="gpweb" value="" /></textarea>
+					<label>Facebook group/page URL</label> <input type="text" name="gppage" id="gppage" value="" /></textarea>
+					
+					<label>Image</label>
+					<input type="file" name="photo" id="photo" />
+					
+					<input type="button" id="addgroupbtn" name="addgroupbtn" value="Create Group" />
+			</fieldset>
+		</form>
+        
+        <script>
+		$(function() {
+		   $('#addgroupbtn').click(function() {
+			
+			var field = {
+				'lat':$('#gplat').val(),
+				'lng':$('#gplng').val(),
+				'polygon':$('#gppoly').val(),
+				'groupName':$('#gpname').val(),
+				'description': $('#gpdesc').val()
+			};
+            var page = $('#gppage').val(), web = $('#gpweb').val();
+            
+            if (field['groupName'] == '') {
+                alert('Please enter a name for your group');
+                $('#gpname').val().focus();
+                return false;
+            }
+            else if (field['description'] == '') {
+                alert('Please enter description for your group');
+                $('#gpdesc').focus();
+                return false;
+            }
+            else if (field['polygon'] == '') {
+                alert('Please draw a boundary in the map');
+                //form.find('input#gpname').focus;
+                return false;
+            }
+			
+			var wcdata = new wcData();
+			
+			wcdata.load('group/add',field,function(data) {
+				if (data.id > 0) {
+                    
+                    var field2 = {
+                        'mtd' : 'addgrp',
+                        'uid' : $.cookie('_wc_session'),
+                        'gid' : data.id,
+                        'name' : field['groupName'],
+                        'web' : web,
+                        'pages' : page
+                    };
+                    
+                    wcdata.postload('/api/status',field2,function(e) {
+                        if (e != -1) {
+                            alert('Group added success');
+                            cleanForm('groupform');
+                            window.location.href = '/community/' + data.id;
+                        }
+                        else
+                            alert(e);
+                        delete wcdata;
+                    });
+				}
+                else
+                    alert(data);
+			
+			});
+			
+		
+		
+			return false;
+			});
+		});
+	</script>
+	
+	
+	
+	</div>
+	
+ </div>
+</div>
+<?php get_footer(); ?>

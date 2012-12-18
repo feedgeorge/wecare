@@ -1,0 +1,23 @@
+<?php
+/* Home page */
+
+get_header();
+
+?>
+	<div id="onecontainer">
+		
+		<div class="middle">
+			<h2>Select your favorite places</h2>
+			<div id="placemap" class="wcmap_middle fgmap">
+				<script>
+					var places = '<?php echo $_REQUEST['place'] ?>';
+					var ftmap = new WCMAP('placemap','gp',false,{plocation:false, showpoly:true, showsearchform:true});
+					ftmap.goLocation(places);
+					//ftmap.fitPoly();
+				</script>
+			</div>
+		</div>
+		
+	</div>
+	
+<?php get_footer(); ?>

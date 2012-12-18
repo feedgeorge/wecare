@@ -1,0 +1,17 @@
+<div id="sidebar">
+	<div id="gpdetail" class="widget sidebox" >
+		<div id="pinfo"></div>
+	</div>
+	<?php if(isset($_COOKIE['_wc_session']) && $_COOKIE['_wc_session'] > 0):?>
+	<div id="gpmem" class="widget sidebox">
+		<a href="" id="invitebtn" class="invitebtn">Invite</a>
+		<a href="" id="emailgrpbtn" class="invitebtn" onclick="emailToGroupMember();return false;">Email to members</a>
+		<div id="grpmembers" class="memberthumb">
+			
+		</div>
+	</div>
+	<?php endif; ?>
+	<div class="ad_widget sidebox" >
+		<img src="<?php echo SITEURL ?>/images/banner_300x250.jpg" />
+	</div>
+</div>

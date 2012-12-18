@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html dir="ltr" lang="en-US" >
+<head>
+<meta http-equiv="Expires" content="-1" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><?php echo $headertitle ?> | <?php load_title() ?></title>
+
+<link rel="shortcut icon" type="image/x-icon" href="<?php echo get_homeurl() ?>/images/favicon2.ico" />
+<link rel="stylesheet" href="<?php echo get_temp_url() ?>jquery-ui.css" type="text/css" media="all" />
+<link rel="stylesheet" type="text/css" media="all" href="<?php echo get_temp_url() ?>styles.css" />
+<script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/jquery-1.7.1.min.js" ></script>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/fg-jquery-0.1a.min.js" ></script>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/jquery-ui.custom.min.js" ></script>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/jquery.watermark.min.js" ></script>
+<script type='text/javascript' src='<?php echo get_homeurl() ?>/js/jquery.simplemodal.js'></script>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/jquery.cookie.js" ></script>
+
+<?php if(isset($_COOKIE['_wc_session']) && $_COOKIE['_wc_session'] > 0):?>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/upload.js" ></script>
+<?php endif;?>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/dateformat.js" ></script>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/classes.js" ></script>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/scripts.js" ></script>
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/functions.js" ></script>
+
+
+<script type='text/javascript' src='http://connect.facebook.net/en_US/all.js#xfbml=1'></script>
+<script type='text/javascript'>var HOMEURL="<?php echo SITEURL ?>",domain="<?php echo SITEDOMAIN ?>";FB.init({appId: "249462095196", status: true, cookie: true});</script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</head>
+
+<body>
+  <div id="page" class="<?php echo $class ?>">
+	<div id="header">
+		<div class="logo"><a href="<?php echo get_homeurl() ?>"><img src="<?php echo get_homeurl() ?>/images/wecarelogo.png"  /></a><div class="tagline">Serving each other towards caring communities</div></div>
+		<div class="side">
+		<?php if(isset($_COOKIE['_wc_session']) && $_COOKIE['_wc_session'] > 0):?>
+		<?php
+				$uinfo = json_decode(stripslashes($_COOKIE['_wc_session_in1']),true);
+		?>
+		Welcome <span class="displayname"><?php echo $uinfo['n'] ?></span>! <a href="<?php echo get_homeurl() ?>/page/dashboard">Dashboard</a>  <a href="#"  class="editProbtn">Edit Profile</a>  <a href="#" id="logoutbtn">Logout</a>
+		
+		<div id="editPropop" class="poplayer2" style="display:none">
+				<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" style="padding:5px"><span id="ui-dialog-title-loginpop" class="ui-dialog-title">Edit Profile</span></div>
+			
+				<form id="uploadAvatorform" method="POST" enctype="multipart/form-data">
+					<fieldset>
+					<img class="thumbnail" src="<?php echo $uinfo['p'] ?>" /> <?php echo $uinfo['n'] ?>
+					<input type="file" name="photo" id="photo" />
+					<input type="submit" name="uploadPic" id="uploadPic" value="Upload New Profile Pic" />
+					</fieldset>
+				</form>
+			
+				<form id="changeContactform" method="POST" enctype="multipart/form-data">
+					<h3>Contact Number</h3>
+					<fieldset>
+					<input type="text" name="contactno" id="contactno" value="<?php $contact = getContact($_COOKIE['_wc_session'],'contact'); echo ($contact!=''?$contact:'+60'); ?>" />
+					<input type="submit" name="contactbtn" id="contactbtn" value="Update" />
+					</fieldset>
+				</form>
+			    
+				<form id="changeEmailform" method="POST" enctype="multipart/form-data">
+					<h3>Email Address</h3>
+					<fieldset>
+					<input type="text" name="newemail" id="newemail" value="<?php $contact = getContact($_COOKIE['_wc_session'],'email'); echo ($contact!=''?$contact:''); ?>" />
+					<input type="submit" name="emailbtn" id="emailbtn" value="Update" />
+					</fieldset>
+				</form>
+				
+				<form id="changPwform" action="/signup" method="POST">
+				<h3>Change Password</h3>
+					<fieldset>
+					<input type="password" name="spass" id="spass" value="" />
+					<br/><input type="password" name="snpass" id="snpass" value="" />
+					<br/><input type="password" name="srpass" id="srpass" value="" />
+					<br/><input type="button"  name="changepass" id="changepass" value="Update" />
+					</fieldset>
+				</form>
+				<script>
+					$(document).ready(function(){
+						$('#changPwform #spass').watermark("Current Password",{className: 'watermark'});
+						$('#changPwform #snpass').watermark("New Password",{className: 'watermark'});
+						$('#changPwform #srpass').watermark("Retype New Password",{className: 'watermark'});
+					});
+				</script>
+		</div>
+		
+		<?php else: ?>
+		<a href="/page/getting-start" >Getting started</a>
+		<a href="#" id="loginbtn">Login</a>
+		<a href="#" id="signupbtn">Signup</a>
+		
+		<div id="loginpop" class="poplayer">
+			<p class="validateTips"></p>
+			
+			<form id="loginform" action="/index.php?page=user&act=login" method="POST">
+				<fieldset>
+				<label>Email</label> <input type="text" name="lemail" id="lemail" />
+				<label>Password</label> <input type="password" name="lpass" id="lpass" />
+				</fieldset>
+			</form>
+		</div>
+		
+		
+		<div id="loginpop2" class="poplayer2">
+			<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" style="padding:5px"><span id="ui-dialog-title-loginpop" class="ui-dialog-title">Member Login</span></div>
+			<p class="validateTips"></p>
+			<form id="signinform" name="signinform" action="" method="POST">
+				<fieldset>
+				<label>Email</label> <input type="text" name="lemail" id="lemail" />
+				<label>Password</label> <input type="password" name="lpass" id="lpass" /><br/>
+				<input type="button" id="signbtn" value="Login" /><input type="button" id="cancelbtn" value="Cancel" />
+				</fieldset>
+			</form>
+			<a href="" id="forgotPwdbtn" class="forgotpasslink"  >Forgot Password?</a>
+			<div id="forgotpwdpop" class="forgot_pass_popup">
+				
+				<form id="forgotPopform" name="forgotPopform" action="" method="POST">
+					<p>Forgot your password ?</p>
+					<input type="text" name="lemail" id="lemail" /><br/>
+					<input type="submit" id="resetbtn" name="resetbtn" value="Reset" /><input type="button" id="cancelbtn" value="Cancel" />
+				</form>
+                <script>
+                $('#forgotPopform input#lemail').watermark("Enter your email address");
+                $('#forgotPopform input#cancelbtn').click(function(){
+                    cleanForm('forgotPopform');
+                    $('#forgotpwdpop').hide();
+                    return false;
+                });
+                </script>
+			</div>
+		</div>
+		
+		<div id="signuppop2" class="poplayer2">
+			<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" style="padding:5px"><span id="ui-dialog-title-loginpop" class="ui-dialog-title">New Member Sign up</span></div>
+			<p class="validateTips">All form fields are required.</p>
+			
+			<form id="signupform2" action="" method="POST">
+				<fieldset>
+				<label>Email</label> <input type="text" name="semail" id="semail" />
+				<label>Password</label> <input type="password" name="spass" id="spass" />
+				<label>Retype Password</label> <input type="password" name="srpass" id="srpass" />
+				<br/><input type="submit" id="signbtn" value="Sign up now" /><input type="button" id="cancelbtn" value="Cancel" />
+				</fieldset>
+			</form>
+		</div>
+		
+		<div id="signuppop" class="poplayer">
+			<p class="validateTips">All form fields are required.</p>
+			
+			<form id="signupform" action="" method="POST">
+				<fieldset>
+				<label>Email</label> <input type="text" name="semail" id="semail" />
+				<label>Password</label> <input type="password" name="spass" id="spass" />
+				<label>Retype Password</label> <input type="password" name="srpass" id="srpass" />
+				</fieldset>
+			</form>
+		</div>
+		
+		<?php endif ?>
+		
+		</div>
+	</div>
+	
+	<div id="main">

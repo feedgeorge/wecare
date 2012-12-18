@@ -1,0 +1,259 @@
+<?php
+/* Home page */
+is_login();
+//is_logined();
+get_header();
+?>
+			<?php get_leftsidebar(); ?>
+			<div id="primary">
+			<div id="content">
+				<h2><span id="gtitle"></span></h2>
+				<div id="memview"><a href="" onclick="$(this).parent().hide();$('#post-list').show();return false;" style="padding-left:20px;background:url(/images/listview_icon.png) no-repeat 0 0;">Return to post view</a><div id="mem-list" class="mem-list"></div></div>
+				<div id="post-list">
+					<ul class="btnlist">
+						<li>
+						<div class="cel_selected">
+							<select id="typeSel">
+								<option value="-1">All Category</option>
+								<?php
+									global $WC;
+									foreach($WC['cat'] as $k => $v) {
+										if ($k != '1')
+											echo '<option value="'.$k.'">'.$v.'</option>';
+									}
+								?>
+							</select> 
+						</div>
+						<div class="cel_selected" style="margin-top:5px;" >
+							<select id="feedbacktypeSel" style="display:none">
+								
+							</select> 
+						</div>
+						</li>
+						<li>
+						<div id="cel_status" class="cel_selected" >
+						<select id="statusSel" ><?php show_selectinput('post_status')?></select>
+						</div>
+						</li>
+					</ul>
+					
+					<ul class="btnlist2">
+                        <li id="settinglink" class="setting" style="background:url(<?php echo get_homeurl() ?>/images/settings-icon.png) -2px 0 no-repeat" title="Setting" style="display:none"></li>
+                           
+						<li id="viewmap" class="mapview" style="background-image:url(<?php echo get_homeurl() ?>/images/map-view.png)" title="Map View"></li>
+						
+						<li id="viewlist" class="link" style="background-image:url(<?php echo get_homeurl() ?>/images/list-view.png)" title="List View"></li>
+						<!-- li class="addpost" style="background-image:url(<?php echo get_homeurl() ?>/images/addpost_icon.png)"><form id="goAddPost" action="/?page=postform" method="post"><input type="hidden" name="gid" id="gid" /></form><a id="addpostbtn" href="">Add Post</a></li -->
+						<li id="mypostlink" class="mypost" style="background-image:url(<?php echo get_homeurl() ?>/images/my-posts.png)" title="My Posts"></li>
+						
+						<li id="addpostlink" class="addpost" style="background:url(<?php echo get_homeurl() ?>/images/add-post.png) -2px 0 no-repeat" title="Add New Post"></li>
+					</ul>
+                     <div class="settingmenu" style="display:none">
+                                        <ul>
+                                        <li id="editgrouplink">Edit Group</li>
+                                        <li id="creategrouplink">Create Group</li>
+                                        <li>Email Members</li>
+                                        <li>Export contents</li>
+                                        </ul>
+                            </div>
+					
+					<div style="clear:both"></div>
+					
+					<div class="groupposts" style="clear:left">
+						<span id="postlist"></span>
+						
+						<div style="clear:left"></div>
+					</div>
+					
+					<div class="maptab" style="display:none">
+						<div id="postlistmap" class="wcmap_large fgmap" style="width:100%;height:500px"></div>
+					</div>
+				</div>
+				
+				
+				<?php load_template(get_template('postform')); ?>
+				
+			</div>
+			</div>
+			</div>
+			<?php get_sidebar(); ?>
+		 
+	<script>
+		//listmyplace();
+		var dmap = new WCMAP('postlistmap','gp',false,{plocation:false,showsearchform:false});
+		
+		var dboard = new wcDashboard(<?php echo $_REQUEST['gid'] ?>);
+		
+		$('#mypostlink').click(function(e) {
+			dboard.getMyPostList();
+			return false;
+		});
+		
+		$('#viewlist').click(function() {
+			$('.maptab').hide();
+			$('#postlist').slideDown();
+			//$('#memview').hide();
+			return false;
+		});
+		
+		$('#viewmap').click(function() {
+			var gid = dboard._gid;
+			dmap.load(dboard.getGeolist());
+			var data1 = new wcData();
+			data1.load('group/info',{groupId:gid},function(e){
+				var ginfo = e;
+				dmap.clearPoly();
+				dmap.addPoly(ginfo);
+				if(dmap._markers.length == 0) 
+					dmap.fitPolys();
+					
+				delete data1;
+			});
+			
+			$('#postlist').hide();
+			//$('#memview').hide();
+			$('.maptab').slideDown();
+			dmap.resize();
+			dmap.fitMarkers();
+			return false;
+		});
+		
+		$('#postcommentbtn').click(function() {
+			dboard.postComment();
+			return false;
+		});
+        
+        $('#settinglink').click(function(){
+            if ($('.settingmenu').is(':hidden'))
+                $('.settingmenu').show();
+            else
+                $('.settingmenu').hide();
+            return false;
+        });
+        
+        $('.settingmenu').blur(function(){
+            $(this).hide();
+        });
+        
+        $('#editgrouplink').click(function(){
+            dboard.goEdit();
+            return false;
+        });
+        
+        $('#creategrouplink').click(function(){
+            window.location.href = '/community/create';
+            return false;
+        });
+		
+		$("#typeSel").change(function() {
+			var type = $(this).val(),subtype=null;
+			var status = $('#statusSel').val();
+			
+			if (type == 2 || type == 3) {
+				$('#cel_status').hide();
+			}
+			else
+				$('#cel_status').show();
+			
+			if (type != 3) {
+				$('#feedbacktypeSel').show();
+				//loadSubcat(type);
+				loadSubcat($('#feedbacktypeSel'),type);
+			}
+			else {
+				$('#feedbacktypeSel').empty();
+				$('#feedbacktypeSel').hide();
+			}
+			
+			if (type != -1 && type.indexOf('-')>-1) {
+					var arr = type.split('-');
+					type = arr[0];
+					subtype = arr[1];
+		    }
+			
+			dboard.refreshPostList(type,status,subtype);
+			
+			
+			
+			return false;
+		});
+		
+		
+		$('#feedbacktypeSel').change(function(){
+			var type = $("#typeSel").val(), subtype2 = $(this).val(), status = $('#statusSel').val();
+			
+			if (type.indexOf('-')>-1 && type != '-1') {
+				var arr = type.split('-');
+				type = arr[0];
+				subtype = arr[1];
+		    }
+			else
+				subtype = 0;
+			
+			
+			
+			dboard.refreshPostList(type,status,subtype,subtype2);
+		});
+	
+		
+		$("#statusSel").change(function() {
+			var status = $(this).val();
+			var type = $("#typeSel").val();
+			var subtype = 0;
+			
+			if (type != 3) {
+				
+				if (type.indexOf('-')>-1) {
+					var arr = type.split('-');
+					type = arr[0];
+					subtype = arr[1];
+				}
+				
+				subtype2 = $('#feedbacktypeSel').val();
+			}
+			
+			dboard.refreshPostList(type,status,subtype,subtype2);
+			return false;
+		});
+		
+		$('#addpostlink').click(function() {
+			//cleanForm('postform');
+			$('#postform').resetForm();
+			$("input[name='photo']").prop('disabled', false);
+			$('#postform').attr( "enctype", "" );
+			if (dboard.getGroupId()!=false) {
+				//$('#goAddPost input#gid').val(dboard.getGroupId());
+				//$('#goAddPost').submit();
+				$('#post-list').hide();
+				$('#addpostform').show();
+				$('#memview').hide();
+				gpmap.resize();
+				gpmap.fitMap();
+				//$('#addpostform').modal({minHeight:600,minWidth:600});
+			}
+			else {
+				alert('Please join group first');
+			}
+			return false;
+		});
+		
+		/*function loadSubcat(cat) {
+			$('#feedbacktypeSel').empty();
+			if (dboard) {
+				var subtypes = dboard.getSubtype(cat), c=0;
+				$('#feedbacktypeSel').append('<option value="-1"> All </option>'+"\n");
+				for(var i in subtypes) {
+					$('#feedbacktypeSel').append('<option value="'+i+'"> '+subtypes[i]+'</option>'+"\n");
+					c++;
+				}
+				if (c > 0) {
+					//$('#subtype > .subcatlist').prepend('<label>Sub Category</label>');
+				}
+				else
+					$('#feedbacktypeSel').hide();
+			}
+		}*/
+		
+	</script>
+
+<?php get_footer(); ?>

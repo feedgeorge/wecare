@@ -1,0 +1,26 @@
+<div id="left_sidebar">
+	
+		<?php if(isset($_COOKIE['_wc_session']) && $_COOKIE['_wc_session'] > 0):?>
+		<div class="sidebox">
+		<div class="widget">
+			<h1>My Communities</h1>
+			<div id="myplaces" class="entry"></div>
+		</div>
+		
+		<div class="widget">
+			<h3>Add New Community</h3>
+			<div class="entry">
+				<form id="findplaceform" name="findplaceform" method="post" action="<?php echo SITEURL ?>/page/groups">
+					<div style="position:absolute;background: url(/images/searchlogo.png) no-repeat 2px 2px;width:18px;height:18px;" ></div>
+					<input type="text" id="place" name="place" style="padding:3px 18px 3px 18px" />
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="ad_widget" style="display:none">
+		<img src="<?php echo SITEURL ?>/images/banner_160x600.jpg" />
+	</div>
+	<?php else: ?>
+	<div class="widget" ></div>
+	<?php endif ?>
+</div>

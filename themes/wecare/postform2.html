@@ -1,0 +1,254 @@
+<?php
+/* Home page */
+//is_login();
+//is_logined();
+get_header();
+
+?>
+<script type='text/javascript' src="/js/datetimepicker.js" ></script>
+<?php get_leftsidebar(); ?>
+<div id="primary">
+	
+	<div id="content">
+		<h2 id="gtitle">Add Post</h2>
+	<div id="pdetail" class="pdetail sidebox" style="margin">
+		<div class="pcontent" style="width:500px; margin:10px">
+			<form id="postform" name="postform" action="" method="post" enctype="multipart/form-data">
+			<input type="hidden" id="apiKey" name="apiKey" value="f8343c8ebd00438983353f03a4ada999" />
+			<input type="hidden" id="lat" name="lat" value="-1" />
+			<input type="hidden" id="lng" name="lng" value="-1" />
+					<label>Add Post to</label> 
+					<div class="cel_selected">
+						<select id="groupId" name="groupId" style="width:150px"></select>
+					</div>
+					<label>Category</label> 
+					<div class="cel_selected">
+						<select id="posttype" name="posttype" style="width:150px">
+							<?php show_selectinput('cat') ?>
+						</select>
+					</div>
+			
+					<label id="contenttitle">Content</label> <textarea id="text" name="text" /></textarea>
+					
+					<div id="eventdate" style="display:none">
+						<label>Event Date</label>
+						<input type="text" name="eventDate" id="eventDate" class="eventDateInput" />					
+					</div>
+					
+					<div id="choiceOpts" style="display:none">
+						<label>Add Options</label>
+						
+						<!--input type="text" name="op" id="op" class="choiceOp" />
+						
+						<input type="button" id="addChoice" name="add" value="AddToList" / --><br/>
+						<!--select id="choices1" name="choices1" multiple="multiple" size="6" style="width:150px">
+						
+						</select-->
+						<div class="choicelist">
+							<input type="text" name="choices[]" id="choices1" class="choiceOp" />
+							<input type="text" name="choices[]" id="choices2" class="choiceOp" />
+							<input type="text" name="choices[]" id="choices3" class="choiceOp" />
+						</div>
+						<input type="button" id="addChoice" name="addChoice" value="+ Add More">
+					</div>
+					
+					<label>Image</label>
+					<input type="file" name="photo" id="photo" />
+					
+					
+					<div class="plocation">
+						<h3>Location</h3> 
+						<div id="gpmap" class="wcmap_middle">
+						<script>
+							var gpmap = new WCMAP('gpmap','',true);
+						</script>
+						loading ... 
+						</div>
+					</div>
+					
+					
+					<!-- label>Share to</label>
+					<input type="checkbox" name="" />Facebook
+					<input type="checkbox" name="" />Twitter
+					<br/ -->
+					<br/>
+					<input type="submit" id="addpostbtn" name="addpostbtn" value="ADD POST" />
+			</form>
+		</div>
+	</div>
+	<script>
+		//listmyplace();
+		var currentgid = <?php echo ((isset($_REQUEST['gid']))?$_REQUEST['gid']:0) ?>;
+		var d = new wcDashboard();
+		
+	</script>
+	</div>
+	
+</div>
+<?php get_sidebar(); ?>
+
+<script>
+		$(function() {
+		var apikey = 'f8343c8ebd00438983353f03a4ada999';
+		var options = { 
+				target:  '#divToUpdate', 
+				data: {'apiKey':apikey},
+				dataType:  'json', 
+				url:        'http://developer.feedgeorge.com/content/addpost', 
+				xhrFields: {
+						withCredentials: true
+				},
+				beforeSubmit: function(formData, jqForm, options) {
+					//var queryString = $.param(formData); 
+					//alert(queryString);
+					//return false;
+				},
+				success:    function(data) { 
+					//alert(JSON.stringify(data));
+					
+					if (data.result.id > 0) {
+						alert('Your post have been submitted!');
+						window.location.href="/page/dashboard";
+					}
+				} 
+			}; 
+ 
+			// pass options to ajaxForm 
+			
+			//$('#postform').ajaxForm(options);
+			
+			$('#addChoice').click(function(){
+				/*var m = $('.choiceOp').val();
+				if (m.length >0 ) {
+					$('#choices1').append($(document.createElement("option")).attr("value",m).text(m).attr('selected',true));
+				}*/
+				var count=0;
+				$('.choiceOp').each(function() {
+						count++;
+				});
+				$('.choicelist').append('<input type="text" name="choices[]" id="choices'+count+'" class="choiceOp" /> ');
+			});
+			
+			$('#postform').submit(function(){
+				
+				var type = $('#posttype').val();
+				var typefield = 'addpost';
+				var url = 'http://developer.feedgeorge.com/content/';
+				
+				if ($('#text').val().length == 0) {
+					alert('Content is empty. Please write something');
+					$('#text').focus();
+					return false;
+				}
+				
+				if (type == 2) {
+					typefield = 'addevent';
+					
+					if ($('#eventDate').val() == '') {
+						alert('Please choose a Date/Time');
+						$('#eventDate').focus();
+						return false;
+					}
+				}
+				else if (type == 3) {
+					typefield = 'addsurvey';
+					//var m = ['Yes','No']
+					//options['data'] = {'apiKey':apikey, 'choices':'sasdasd'};
+					var count=0,got=0;
+					$('.choiceOp').each(function() {
+						if ($(this).val().length > 0) got++;
+						count++;
+					});
+					
+					if (got < 2) {
+						alert('Please type at least two choices');
+						$('.choiceOp').each(function() {
+							if ($(this).val().length == 0) {
+								$(this).focus();
+								return false;
+							}
+						});
+						return false;
+					}
+					
+				}
+				
+				options['url'] = url + typefield;
+				//$('#choices').val(selected);
+				
+			    $(this).ajaxSubmit(options);
+				
+				return false;
+			});
+			
+			$('#submitbtn').click(function() {
+					var selected = ['yes','no','dasda'];
+					var params = {
+						'groupId': $('#groupId').val(),
+						'text': $('#text').val(),
+						'lat': $('#lat').val(),
+						'lng': $('#lng').val(),
+						'choices[]': selected,
+						'apiKey':apikey
+					};
+					var obj = $('#postform').serialize();
+					//obj = encodeURIComponent(params);	
+					//var params = decodeURIComponent(obj);
+					//alert(obj);
+					
+					$.ajax({
+
+						url: 'http://developer.feedgeorge.com/content/addsurvey',
+						type: "post",
+						data: obj,
+						dataType: 'json',
+						
+						xhrFields: {
+							withCredentials: true
+						},
+						crossDomain:true,
+						error: function(jqXHR, textStatus){alert("url error:" + textStatus)},
+						success: function(e, textStatus, XMLHttpRequest) {
+							if (data.success == true) {
+								cleanForm('postform');
+								alert('Post have added.');
+							}
+							else {
+								alert(data.error +": "+ data.reason);
+							}
+						}
+					});
+				
+			});
+			
+			$( "#eventDate" ).datetimepicker({timeFormat: 'hh:mm',dateFormat:'yy-mm-dd'});
+			//$( "#eventDate" ).datepicker({dateFormat:'yy-mm-dd'});
+			$('#posttype').change(function(e) {
+				
+				e.stopImmediatePropagation();
+				$(this).blur();
+				if ($(this).val() == 2) {
+					$('#eventdate').show();
+					$('#choiceOpts').hide();
+					$('#contenttitle').html('Content');
+				}
+				else if ($(this).val() == 3) {
+					$('#eventdate').hide();
+					$('#choiceOpts').show();
+					$('#contenttitle').html('Question');
+				}
+				else {
+					$('#eventdate').hide();
+					$('#choiceOpts').hide();
+					$('#contenttitle').html('Content');
+				}
+			});
+		});
+		
+		
+		
+		
+	</script>
+
+
+<?php get_footer() ?>

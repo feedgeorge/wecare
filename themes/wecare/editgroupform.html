@@ -1,0 +1,115 @@
+<?php
+/* Home page */
+//is_login();
+//is_logined();
+get_header('','Edit Group');
+
+?>
+	
+	<div id="primary">
+	
+	
+	<div id="onecontainer">
+		<form id="groupform" name="groupform" class="groupform" action="" method="post">
+            <h1>Edit Group</h1>
+			<input type="hidden" id="gppoly" name="gppoly" value="<?php echo $params['polygon'] ?>" />
+			<input type="hidden" id="gplat" name="gplat" value="<?php echo $params['lat'] ?>" />
+			<input type="hidden" id="gplng" name="gplng" value="<?php echo $params['lng'] ?>" />
+            <input type="hidden" id="gpId" name="gpId" value="<?php echo $params['id'] ?>" />
+			<fieldset>
+					
+					<label>Group Name</label> <input type="text" name="gpname" id="gpname" value="<?php echo $params['name'] ?>" />
+					<label>Description</label> <textarea id="gpdesc" name="gpdesc" value="<?php echo $params['description'] ?>"/></textarea>
+					
+                    <label>Group Boundary</label>
+                    Click on the map to start drawing
+					<div id="gpmap" class="wcmap_large fgmap" style="width:100%">
+					<script>
+						var gpmap = new WCMAP('gpmap','gp',true,{'drawpoly':true});
+					</script>
+					loading ... 
+					</div>
+					<label>Website URL</label> <input type="text" name="gpweb" id="gpweb" value="<?php echo $params['web'] ?>" /></textarea>
+					<label>Facebook group/page URL</label> <input type="text" name="gppage" id="gppage" value="<?php echo $params['page'] ?>" /></textarea>
+					
+                    <label>Image</label>
+					<input type="file" name="photo" id="photo" />
+					
+					<input type="button" id="editgroupbtn" name="editgroupbtn" value="Update" />
+			</fieldset>
+                    <div style="margin:0 auto; width:400px; display:block;text-align:center">or</div>
+                    
+                    <input type="button" id="delgroupbtn" name="delgroupbtn" value="Delete Group" />
+		</form>
+        <script>
+        
+		$(document).ready(function() {
+           
+           var poly = $('#groupform input#gppoly').val(), lat = $('#groupform input#gplat').val(), lng = $('#groupform input#gplng').val();
+           //gpmap.setLocation(lat,lng);
+           gpmap.addPoly(poly);
+           
+		   $('#editgroupbtn').click(function() {
+			//alert(apikey);
+			var field = {
+				'lat':$('#gplat').val(),
+				'lng':$('#gplng').val(),
+				'polygon':$('#gppoly').val(),
+				'groupName':$('#gpname').val(),
+				'description': $('#gpdesc').val(),
+                'groupId': $('#gpId').val()
+			};
+            
+            var page = $('#gppage').val(), web = $('#gpweb').val();
+			
+			var wcdata = new wcData();
+			
+			wcdata.load('group/update',field,function(data) {
+				if (data.id > 0) {
+                    
+                    //var data = new wcData();
+                    
+                    var field2 = {
+                        'mtd' : 'addgrp',
+                        'uid' : $.cookie('_wc_session'),
+                        'gid' : data.id,
+                        'name' : field['groupName'],
+                        'web' : web,
+                        'pages' : page
+                    };
+                    
+                    wcdata.postload('/api/status',field2,function(e) {
+                        if (e != -1) {
+                            alert('Group updated');
+                            //cleanForm('groupform');
+                            window.location.href = '/community/' + data.id;
+                        }
+                        else
+                            alert(e);
+                        delete wcdata;
+                    });
+                    
+                    
+				}
+                else {
+                    alert(JSON.stringify(data));
+                }
+			
+			});
+			
+			return false;
+			});
+            
+            $('#delgroupbtn').click(function() {
+                var id = $('#gpId').val();
+                var gp = new wcGroups().deleteGroup(id);
+                
+                return false;
+            });
+		});
+	</script>
+	</div>
+	
+ </div>
+</div>
+<?php get_footer(); ?>

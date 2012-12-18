@@ -1,0 +1,41 @@
+<div id="sidebar" style="margin-left:-10px; width:180px">
+	<div id="gpdetail" class="widget sidebox_g spacing">
+				<form action="" method="post" id="joingroupform" name="joingroupform" class="offbuttoneffect">
+					<input type="hidden" name="gid" id="gid" value="<?php echo $params['id'] ?>" />
+					<input type="button" id="editbtn" name="editbtn" value="Join this Community"  />
+				</form>
+				
+				
+				<?php if(isset($_COOKIE['_wc_session']) && $_COOKIE['_wc_session'] > 0):?>
+				
+				<?php else: ?>
+				<hr style="margin:10px 0;color:#6D6E70" />
+				<div class="or" style="position:absolute;top:40px;left:80px;text-align:center;background-color:#FFF;z-index:2;width:20px;height:20px;">or</div>
+				<div class="signupform">
+						<h2>Sign up for Free</h2>
+						<form id="signupform" action="" method="POST">
+							<input type="hidden" name="gid" id="gid" value="<?php echo $params['id'] ?>" />
+							<fieldset>
+								<input type="text" name="semail" id="semail" />
+								<input type="password" name="spass" id="spass" />
+								<input type="password" name="srpass" id="srpass" />
+								<input type="submit" name="signbtn" id="signbtn" value="Go" />
+							</fieldset>
+						</form>
+						<script>
+						$(document).ready(function(){
+							cleanForm('signupform');
+							$('#signupform #semail').watermark("Email",{className: 'watermark'});
+							$('#signupform #spass').watermark("Password",{className: 'watermark'});
+							$('#signupform #srpass').watermark("Retype Password",{className: 'watermark'});
+						});
+						</script>
+				</div>
+				<?php endif ?>
+	</div>
+	
+
+	<div class="ad_widget">
+		<img src="<?php echo SITEURL ?>/images/banner_180x150.jpg" />
+	</div>
+</div>

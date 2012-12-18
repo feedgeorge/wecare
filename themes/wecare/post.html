@@ -1,0 +1,271 @@
+<?php
+/* Home page */
+//is_login();
+//is_logined();
+global $WC; 
+
+
+$post = &$params;
+$htitle = $post['category']['catname'] . (!empty($post['category']['subcat2'])?'-' . $post['category']['subcatname'] : '') ;
+get_header('',$htitle);
+
+
+?>
+
+<?php   get_leftsidebar(); ?>
+			<div id="primary">
+				<div id="content">
+					<h2 id="gtitle">Post</h2>
+					<?php if (isset($post)): ?>
+					<div id="pdetail" class="pdetail sidebox">
+						<div class="pshare">
+								<!--ul>
+									<li>
+										<div class="fb-like" data-send="false" data-layout="box_count" data-width="120" data-show-faces="false" data-font="tahoma" data-href="<?php echo SITEURL .'/post/'.$post['id'] ?>" style="width:55px;padding-left:3px"></div>
+									</li>
+									<li>
+										<a href="http://twitter.com/share" class="twitter-share-button" data-url="<?php echo SITEURL .'/post/'.$post['id'] ?>" data-size="small" data-count="vertical" data-text="@wecare <?php echo SITEURL .'/post/'.$post['id'] ?>" >Tweet</a>
+									</li>
+									
+									<li>
+										<div class="g-plusone" data-size="tall"></div>
+									</li>
+								</ul -->
+								
+								<li class="smail" <?php if(isset($_COOKIE['_wc_session']) && $_COOKIE['_wc_session'] > 0):?> onclick="emailToFriend('<?php echo ((strlen($post['text'])>30)?substr($post['text'],0,30) . '...':$post['text']) .'  '. SITEURL . '/post/'.$post['id'].'/' ?>')" <?php endif; ?>></li>
+								
+								<li ><a class="stw" href="https://twitter.com/share?url=<?php echo SITEURL .'/post/'.$post['id'] ?>&related=WeCareMY&text=<?php echo ((strlen($post['text'])>30)?substr($post['text'],0,30) . '...':$post['text']) ?>"></a></li>
+								<li class="sfb" onclick="postToFeed('<?php echo SITEURL .'/post/'.$post['id'] ?>','<?php echo substr($post['text'],0,30)  ?>','<?php echo $WC['cat'][$post['type']] ?>','')"></li>
+								<li style="margin:10px auto">
+									<div class="fb-like" data-send="false" data-layout="box_count" data-width="120" data-show-faces="false" data-font="arial" data-href="<?php echo SITEURL .'/post/'.$post['id'] ?>" style="width:55px;padding-left:3px"></div>
+								</li>
+						</div>
+						<div class="pcontent">
+							<div class="statusbar">
+								<li class="cat" ><?php echo $post['category']['catname'] . (!empty($post['category']['subcat2'])?'| ' . $post['category']['subcatname'] : '') ?></li><li class="status" ><?php echo ($post['type']==1)?$post['status']['name']:'' ?></li>
+							</div>
+							
+							<div style="padding:10px 0 0 5px">
+								<?php 
+									if ($post['image'] != ''):
+								?>
+								<div class="featuredImage">
+								<?php
+										$imageurl = '<img src="'.$post['image'].'" class="plogo"  />';
+										echo $imageurl;
+								?>
+								</div> 
+								
+								<?php endif; ?>
+								
+								<div class="text">
+								<?php echo $post['text']  ?>
+								
+								<?php
+									if ($post['type'] == 2):
+								?>
+									<div class="eventdate">Event Date: <?php echo date('d M,Y h:i', strtotime($post['eventDate'])) ?></div>
+								<?php endif ?>
+								
+								</div>
+								
+								<div class="note">
+									<span class="author">by <strong><?php echo $post['authorName'] ?></strong></span> | <span class="timenote"><?php echo date('d M,Y h:i', strtotime($post['lastUpdate'])) ?></span>
+									<?php
+										$userid = $_COOKIE['_wc_session'];
+										
+										if ($userid == $post['authorId'])
+											echo ' | <a id="post-'.$post['id'].'" href="" class="editpostbtn">Edit</a>';
+											
+									?>
+									
+								</div>
+								
+								<div class="meta">
+								
+								
+								<?php
+									if ($post['type'] == 3):
+								?>
+									<div class="surveyform">
+										
+										<?php
+											if (isset($post['options']) && count($post['options']) > 1):
+												$options = '';
+												sort($post['options']);
+												
+												foreach($post['options'] as $v) {
+													$id = $v['id'];
+													$value = $v['description'];
+													$options .= '<li><input type="radio" name="option" id="op-'.$id.'" value="'.$id.'" class="wcoptions" /><label for="op-'.$id.'">' .$value . '</label></li>';
+													
+												}
+											?>
+									
+											<form action="" id="surveyform" name="surveyform" method="post" style="display:none">
+												<input type="hidden" id="cid" name="cid" value="<?php echo $post['id'] ?>" />
+												<ul><?php echo $options ?></ul>
+												<input type="button" name="choosebtn" id="choosebtn" value="Choose Your Option" />
+											</form>
+											
+											<?php endif; ?>
+										<a class="button" id="resultbtn" href="">View Results</a>
+										<div id="pie1" class="chart"></div>
+
+									</div>
+								<?php endif ?>
+								</div>
+								
+							
+								<div class="clear"></div>
+								
+									<div class="plocation" style="display:none">
+										<h3>Location</h3>
+										<div id="postmap" class="wcmap_middle box"></div>
+									</div>
+								</div>
+							<div class="pcomment">
+								<h3><?php echo $post['commentCount'] ?> Comments</h3>
+						
+								<div id=commentlist></div>
+								
+								<form id="commentform" name="commentform" method="post" style="display:none">
+									<input type="hidden" name="contentId" id="contentId" value="<?php echo $post['id'] ?>" />
+									<fieldset>
+										<textarea id="comment" name="comment"></textarea>
+										<input type="button" name="postcommentbtn" id="postcommentbtn" value="Submit Comment" />
+										<input type="button" name="backtotoptbtn" id="backtotoptbtn" value="Back To Top" style="text-align:right"/>
+									</fieldset>
+								</form>
+								
+								
+							</div>
+						</div>
+					</div>
+					
+					<div id="editpostform" class="poplayer2">
+						<form id="editstatusfrm" name="editstatusfrm" method="post">
+						<input type="hidden" name="cid" id="cid" value="<?php echo $post['id'] ?>" />
+						<input type="hidden" name="gid" id="gid" value="<?php echo $post['groupId'] ?>" />
+						<input type="hidden" name="type" id="type" value="<?php echo $post['type'] ?>" />
+						<input type="hidden" name="act" id="act" value="add" />
+						<label>Status</label>
+						<div class="cel_selected">
+						<select id="status" name="status">
+							<?php
+								show_selectinput('post_status',$post['status']['id']);
+							?>
+						</select>
+						</div>
+						<br/><input type="submit" name="submit" id="update" value="Update Status">
+						</form>
+						
+						<form id="editpostfrm" name="editpostfrm" method="post">
+						<input type="hidden" name="cid" id="cid" value="<?php echo $post['id'] ?>" />
+						<input type="hidden" name="gid" id="gid" value="<?php echo $post['groupId'] ?>" />
+						<input type="hidden" name="act" id="act" value="editpost" />
+						<label>Category</label>
+						<?php global $WC; if ($post['type'] == 1): ?>
+						<div class="cel_selected">
+						<select id="posttype" name="posttype" style="width:210px">
+							<option value="-1">Please select</option>
+							<?php
+								
+								foreach($WC['cat'] as $k => $v) {
+									if ($k != 2 && $k != 3) {
+										if ($k != "1") 
+											echo '<option value="'.$k.'" '.(($k == $post['category']['catid'])?'selected':'').'>'.$v.'</option>';
+									}
+								}
+							?>
+						</select>
+						</div>
+						<?php elseif ($post['type'] == 2): ?>
+						<input type="hidden" name="posttype" id="posttype" value="<?php echo $post['type'] ?>" />
+						<?php endif; ?>
+						<br/>
+						<div class="cel_selected">
+						<select id="postsubtype" name="postsubtype" style="width:210px">
+							<?php
+							$cat = $post['category']['catid'];
+							
+							if ($post['type'] == 2 && $cat == '') $cat = $post['type'];
+							
+							$subcatid = $post['category']['subcat2'];
+							$subtypelist = $WC['SUBTYPE'][$cat];
+							foreach($subtypelist as $k=>$v) {
+								echo '<option value="'.$k.'" '.(($k == $subcatid)?'selected':'').' >' . $v . '</option>';
+							}
+							?>
+						</select>
+						
+						</div>
+						<br/><input type="submit" name="submit" id="update" value="Update Category">
+					</div>
+					
+				<link rel="stylesheet" type="text/css" href="<?php echo get_temp_url() ?>css/jquery.jqplot.min.css" />
+				<script type="text/javascript" src="<?php echo get_homeurl() ?>/js/jquery.jqplot.min.js"></script>
+				<script class="include" language="javascript" type="text/javascript" src="<?php echo get_homeurl() ?>/js/jqplot.pieRenderer.min.js"></script>
+				<script>
+				var gid = <?php echo $post['groupId'] ?>;
+				var pid = <?php echo $post['id'] ?>;
+				
+				
+				<?php if ($post['lat'] != -1 && $post['lng'] != -1): ?>
+				var postmap = new WCMAP('postmap','',false,{singlemap:true,plocation:false,showsearchform:false});
+				postmap.setLocation(<?php echo $post['lat'].','.$post['lng'] ?>);
+				$('.plocation').show();
+				<?php endif ?>
+				//postmap();
+				var dboard = new wcDashboard(gid);
+				dboard.listComments(pid,gid);
+				//$('#postTitle').html(dboard.getGroupName(gid));
+				$('#postcommentbtn').click(function() {
+						dboard.postComment();
+						return false;
+				});
+				
+				<?php if ($post['type'] == 3): ?>
+				
+				var options = <?php echo json_encode($post['options']) ?>;
+				dboard.loadChart('pie',options);
+				$('#choosebtn').click(function(){
+					var id = $('#surveyform input[name=option]:checked').val();
+					if (id > 0) {
+						var cid = $('#surveyform input#cid').val();
+						dboard.submitAnswer(id,cid,$('#surveyform'));
+					}
+					else {
+						alert('Please choose your option');
+					}
+					return false;
+				});
+				$('#resultbtn').click(function(){
+					$('#pie1').toggle();
+					return false;
+				});
+				<?php else: ?>
+				$('.editpostbtn').click(function(){
+					$('#editpostform').modal({minHeight:200,minWidth:300});
+					return false;
+				});
+				
+				
+				
+				<?php endif; ?>
+			</script>
+			<!-- Place this render call where appropriate -->
+			<script type="text/javascript">
+			  (function() {
+				var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+				po.src = 'https://apis.google.com/js/plusone.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+			  })();
+			</script>
+			<?php else: ?>
+				The post not exist
+			<?php endif ?>
+			</div>
+		 </div>
+		 <?php get_sidebar(); ?>
+<?php get_footer(); ?>

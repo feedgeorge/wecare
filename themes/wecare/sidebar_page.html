@@ -1,0 +1,14 @@
+<div id="left_sidebar" style="width:320px">
+	
+		<ul class="page-nav">
+			<?php $page = $_REQUEST['page']; 
+				$pplist = array('about'=>'About Us','download'=>'Download Apps','faq'=>'FAQ','getting-start'=>'Getting Started','privacy' => 'Privacy Policy','terms'=>'Terms & Conditions');
+				foreach($pplist as $k=>$v) {
+					echo '<li class="'.($k==$page?'selected':'').'" ><a href="/page/'.$k.'">'.$v.'</a></li>';
+			  }
+			?>
+			
+		</ul>
+	
+	
+</div>

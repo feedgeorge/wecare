@@ -1,0 +1,45 @@
+<?php
+/* Home page */
+
+get_header('page_outline');
+
+?>
+	<div id="onecontainer">
+		
+		<div id="slides">
+				<div class="slides_container">
+					<?php load_banners() ?>
+				</div>
+				<a href="#" class="prev"><img src="<?php echo get_homeurl() ?>/images/arrowprev.png" width="24" height="43" alt="Arrow Prev"></a>
+				<a href="#" class="next"><img src="<?php echo get_homeurl() ?>/images/arrownext.png" width="24" height="43" alt="Arrow Next"></a>
+	    </div>
+		
+		<div style="clear:both"></div>
+		
+		<div class="middle">
+			<div id="frontmap" class="wcmap_middle fgmap box">
+				<script>
+					var ftmap = new WCMAP('frontmap','gp',false,{plocation:true,showlabel:true,showpoly:true, showsearchform:true});
+				</script>
+			</div>
+		</div>
+		
+		<div class="container">
+			<form id="shareplaceform" name="shareplaceform" class="shareplaceform" method="post">
+				<label>Tell us what places you want next?  <input type="text" name="place" id="place" /> <input type="submit" name="submitbtn" id="submitbtn" value="submit" />  </label>
+			</form>
+			<div class="triangle"></div>
+		</div>
+	</div>
+	<script>
+		$(function(){
+			$('#slides').slides({
+				preload: true,
+				preloadImage: '<?php echo get_homeurl() ?>/images/loading.gif',
+				hoverPause: true,
+				play: 5000,
+				pause: 2500
+			});
+		});
+	</script>
+<?php get_footer(); ?>

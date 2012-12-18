@@ -1,0 +1,48 @@
+<?php
+/* Others page */
+
+get_header('');
+
+?>
+	<?php load_template(get_template('sidebar_page')); ?>
+	<div id="primary" style="width:700px">
+			<div id="content">
+				
+				<div id="download">
+					<div id="dn_slides" style="float:left;margin-left:20px;margin-top:35px">
+						<div class="slideframe"></div>
+							<div class="slides_container">
+								 <a href="" onclick="return false;"><img src="<?php echo get_homeurl() ?>/images/iphone/iphone1.png" /></a>
+								 <a href="" onclick="return false;"><img src="<?php echo get_homeurl() ?>/images/iphone/iphone2.png" /></a>
+								 <a href="" onclick="return false;"><img src="<?php echo get_homeurl() ?>/images/iphone//iphone3.png" /></a>
+								 <a href="" onclick="return false;"><img src="<?php echo get_homeurl() ?>/images/iphone//iphone4.png" /></a>
+								 <a href="" onclick="return false;"><img src="<?php echo get_homeurl() ?>/images/iphone/iphone5.png" /></a>
+								 <a href="" onclick="return false;"><img src="<?php echo get_homeurl() ?>/images/iphone/iphone6.png" /></a>
+							</div>
+					</div>
+					
+					<div style="float:left;margin-left:20px"><img src="<?php echo get_homeurl() ?>/images/Samsung.png" align="bottom" /></div>
+					
+					  <div class="download1" style="float:left;margin-left:10px;">
+						 <a href="http://iphone.feedgeorge.com/download"><img src="<?php echo get_homeurl() ?>/images/buttonappstore.png"  /></a> 
+						 <br/><a href="http://android.feedgeorge.com/download"><img src="<?php echo get_homeurl() ?>/images/buttongoogleplay.png" /></a>
+					 </div>
+					<div style="clear:left"></div>
+				  </div>
+			  </div>
+				 
+			
+	
+	</div>
+	<script>
+		$(function(){
+			$('#dn_slides').slides({
+				preload: true,
+				preloadImage: '<?php echo get_homeurl() ?>/images/loading.gif',
+				hoverPause: true,
+				play: 5000,
+				pause: 2500
+			});
+		});
+	</script>
+<?php get_footer(); ?>

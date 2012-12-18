@@ -1,0 +1,182 @@
+<script type='text/javascript' src="<?php echo get_homeurl() ?>/js/datetimepicker.js" ></script>
+	<div id="addpostform" style="display:none">
+	<h2 id="gtitle">Add Post</h2>
+	<div id="pdetail" class="pdetail" style="margin">
+		<div class="pcontent" style="width:500px; margin:10px">
+			<form id="postform" name="postform" action="" method="post" enctype="multipart/form-data">
+			
+			<input type="hidden" id="lat" name="lat" value="-1" />
+			<input type="hidden" id="lng" name="lng" value="-1" />
+			<input type="hidden" id="groupId"  name="groupId"  />
+			<input type="hidden" id="cid"  name="cid"  />
+			<input type="hidden" id="act"  name="act"  />
+					<!--label>Add Post to</label> 
+					<div class="cel_selected">
+						<select id="groupId" name="groupId" style="width:150px"></select>
+						<input type="groupId" name="groupId" value="" />
+					</div-->
+					<label>Category</label> 
+					<div class="cel_selected" >
+						<select id="posttype" name="posttype" style="width:175px">
+							<option value="-1">Please select</option>
+							<?php
+								global $WC;
+								foreach($WC['cat'] as $k => $v) {
+									
+										if ($k != "1") 
+											echo '<option value="'.$k.'" >'.$v.'</option>';
+									
+								}
+							?>
+						</select>
+					</div>
+					
+					<div id="subtype" style="padding:5px;">
+						
+						<div class="subcatlist"></div>
+					</div>
+					
+					<label id="contenttitle">Content</label> <textarea id="text" name="text" /></textarea>
+					
+					<div id="eventdate" style="display:none">
+						<label>Event Date</label>
+						<input type="text" name="eventDate" id="eventDate" class="eventDateInput" />					
+					</div>
+					
+					<div id="choiceOpts" style="display:none">
+						<label>Add Options</label>
+						<div class="choicelist">
+							<input type="text" name="choices[]" id="choices1" class="choiceOp" />
+							<input type="text" name="choices[]" id="choices2" class="choiceOp" />
+							<input type="text" name="choices[]" id="choices3" class="choiceOp" />
+						</div>
+						<input type="button" id="addChoice" name="addChoice" value="+ Add More">
+					</div>
+					
+					<label>Image</label>
+					<input type="file" name="photo" id="photo" />
+					
+					<div id="tags">
+						<!--label>Tagging</label>
+						<input type="checkbox" name="posttags[]" id="posttags_1" value="1" /><label for="posttags_1" class="postlabel">Attention to Police</label>
+						<input type="checkbox" name="posttags[]" id="posttags_2" value="2" /><label for="posttags_2" class="postlabel">Attention to MPPJ</label -->
+					</div>
+					<label>I/C (first 8 digit)</label>
+					<input type="text" name="ic" id="ic" maxlength="8"  />
+					<label>Contact No</label>
+					<input type="text" name="contactno" id="contactno"  />
+					
+					
+					<label style="margin-top:10px;font-size:11px;">Disclaimers</label>
+					
+					<ul class="text">
+					<li>All postings are subjected to approval by Community Administrator after verification.</li>
+					<li>All items posted in WECARE website is only for for the website, there is no details transferred to the respective agencies responsible. If you have reported separately to the responsible government agencies, please provide the below details, Reported to/Date of Report/ Reported Via/Report/Reference Number/Status-Acknowledged/Action being taken/Problem Solved/Problem not being attended </li> 
+					</ul>
+					
+					
+					<div class="plocation">
+						<h3>Location</h3> 
+						<div id="gpmap" class="wcmap_middle fgmap">
+						<script>
+							var gpmap = new WCMAP('gpmap','',true);
+							
+						</script>
+						loading ... 
+						</div>
+					</div>
+					
+					<br/>
+					<input type="submit" id="addpostbtn" name="addpostbtn" value="ADD POST" />
+					<input type="button" id="cancelpostbtn" name="cancelpostbtn" value="Cancel" />
+			</form>
+			<div id="divToUpdate"></div>
+		</div>
+	</div>
+
+	<script>
+		$(function() {
+			$.extend($.datepicker,{_checkOffset:function(inst,offset,isFixed){return offset}});
+			$('#addChoice').click(function(){
+				var count=0;
+				$('.choiceOp').each(function() {
+						count++;
+				});
+				$('.choicelist').append('<input type="text" name="choices[]" id="choices'+count+'" class="choiceOp" /> ');
+			});
+			
+			if ($('#posttype').val() == '1-1' || $('#posttype').val() == 2) {$('#subtype').show();loadSubtype($('#posttype').val())};
+			
+			$('#postform').submit(function(){
+				
+				var g = new wcGroups();
+				
+				g.addPost($(this));
+				return false;
+			});
+			
+			$('#cancelpostbtn').click(function(e){
+				$('#post-list').show();
+				$('#addpostform').hide();
+				return false;
+			});
+			
+			$( "#eventDate" ).datetimepicker({timeFormat: 'hh:mm',dateFormat:'yy-mm-dd'});
+	
+			$('#posttype').change(function(e) {
+				
+				e.stopImmediatePropagation();
+				$(this).blur();
+				if ($(this).val() == 2) {
+					$('#eventdate').show();
+					$('#choiceOpts').hide();
+					$('#subtype').show();
+					$('#contenttitle').html('Content');
+					
+					loadSubtype($(this).val());
+				}
+				else if ($(this).val() == 3) {
+					$('#eventdate').hide();
+					$('#choiceOpts').show();
+					$('#subtype').hide();
+					$('#contenttitle').html('Question');
+				}
+				else {
+					$('#eventdate').hide();
+					$('#choiceOpts').hide();
+					$('#subtype').show();
+					$('#contenttitle').html('Content');
+					
+					loadSubtype($(this).val());
+				}
+			});
+			
+			$('textarea').keypress(function(event) {
+				if (event.keyCode == 13) {
+					event.preventDefault();
+					return false;
+				}
+			});			
+
+		});
+		
+		function loadSubtype(cat) {
+			$('#subtype >.subcatlist').empty();
+			if (dboard) {
+				var subtypes = dboard.getSubtype(cat), c=0;
+				
+				for(var i in subtypes) {
+					$('#subtype > .subcatlist').append('<input type="radio" name="postsubtype" id="posttype2_'+i+'" value="'+i+'" /><label for="posttype2_'+i+'" class="postlabel">'+subtypes[i]+'</label>'+"\n");
+					c++;
+				}
+				if (c > 0) {
+					$('#subtype > .subcatlist').prepend('<label>Sub Category</label>');
+				}
+				else
+					$('#subtype').hide();
+			}
+		}
+		
+	</script>
+	</div>
+

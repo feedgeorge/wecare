@@ -1,0 +1,5 @@
+AuthUserFile /home/wecaremy/.wcpass
+AuthGroupFile /dev/null
+AuthName "WECARE Private Place"
+AuthType Basic
+require valid-user

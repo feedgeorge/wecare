@@ -1,0 +1,48 @@
+<?php
+/* Home page */
+//is_login();
+//is_logined();
+get_header();
+?>
+<?php get_leftsidebar(); ?>
+			<div id="primary">
+				<div id="content">
+					<div id="pdetail" class="pdetail">
+						<h2>Post detail: </h2>
+						<div class="pcontent"></div>
+						
+						<div class="plocation">
+							<h3>Location</h3>
+							<div id="postmap" class="wcmap_middle"></div>
+						</div>
+						<div class=pcomment>
+							<h3>Comments</h3>
+							<form id="commentform" name="commentform" method="post">
+							<input type="hidden" name="contentId" id="contentId" />
+							<fieldset>
+								<textarea id="comment" name="comment"></textarea>
+								<br/><input type="button" name="postcommentbtn" id="postcommentbtn" value="Add a comment" />
+							</fieldset>
+							</form>
+							
+							<div id=commentlist></div>
+						</div>
+					</div>
+				</div>
+		 </div>
+		 <?php get_sidebar(); ?>
+<script>
+	var gid = <?php echo $_REQUEST[pid] ?>;
+	var postmap = new WCMAP('postmap','',false,{singlemap:true,plocation:false,showsearchform:false});
+	var dboard = new wcDashboard();
+	dboard.showPost(gid);
+	
+	
+	$('#postcommentbtn').click(function() {
+			
+			dboard.postComment();
+			return false;
+	});
+</script>
+
+<?php get_footer(); ?>

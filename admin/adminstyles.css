@@ -1,0 +1,12 @@
+
+.menu {
+	margin:5px 0 20px 0;
+}
+
+table {
+	min-width:500px;
+}
+
+table th {
+   text-align:left;
+}

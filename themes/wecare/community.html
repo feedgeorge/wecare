@@ -1,0 +1,81 @@
+<?php
+/* Others page */
+
+get_header('page_outline');
+?>
+	
+	<div id="primary" style="width:830px;min-height:500px;margin-bottom:50px">
+		
+			<div id="gpinfo">
+				<div class="logo sidebox">
+					<div class="pshare">
+						<li class="smail" onclick="emailToFriend('Join me at <?php echo $params['name'] ?> <?php echo SITEURL . '/place/'.$params['id'].'/' ?>')"></li>
+						<li><a class="stw" href="https://twitter.com/share?url=<?php echo urlencode(SITEURL . '/place/'.$params['id'].'/') ?>&text=Join+me+at+<?php echo $params['name'] ?>&via=<?php echo urlencode('wecare.com.my') ?>" target="_blank"></a></li>
+						<li class="sfb" onclick="postToFeed('<?php echo SITEURL . '/place/'.$params['id'].'/'.$params['name'] ?>','<?php echo $params['name'] ?>','Group','<?php echo substr($params['description'],1,50) ?>')"></li>
+					</div>
+					<h2><?php echo $params['name'] ?></h2>
+					<div style="width:90%;padding-bottom:10px">
+						<?php 
+							$imgfile = 'place_'.$params['id'].'.jpg';
+							if (empty($params['icon'])) {
+								if (file_exists(SITEPATH . '/content/img/' .$imgfile)) {
+									$placeicon = '/content/img/' .$imgfile;
+								}
+								else
+									$placeicon ='/images/place_icon.png';
+							}
+							else
+								$placeicon = $params['icon'];
+						?>
+						<img src="<?php echo $placeicon ?>" style="width:100%" />
+						<div class="entry"><?php echo $params['description'] ?></div>
+						
+						<div class="statusbar">
+							<span class="memc" >TOTAL MEMBERS: <?php echo $params['memberCount'] ?></span><span class="postc" >TOTAL POSTS: <?php echo $params['postCount'] ?></span>
+						</div>
+					</div>
+				</div>
+				<div class="desc">
+					<h2><?php echo $params['postCount'] ?> Posts</h2>
+					<div class="postlist">
+						
+						<div id="postlist" class="posts">
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="clear:both"></div>
+		
+		
+	</div>
+    <?php load_template(get_template('sidebar_group')); ?>
+<script>
+	var gid = '<?php echo $params['id'] ?>';
+	var wgroup = new wcGroups();
+	wgroup.loadSingle(gid);
+	wgroup.checkJoin(gid);
+	$(document).ready(function() {
+		$('#signupform #signbtn').click(function(){
+			_signup();
+			return false;
+		});
+		
+		$('#editbtn').click(function() {
+				//var id = $('#joingroupform >#gid').val();
+				var value = $('#editbtn').val();
+				
+				if(value == 'Join this Community') {
+					
+					wgroup.join(gid);
+				}
+				else if(value == 'Leave this Community') {
+					wgroup.leave(gid,function(e) {
+						$('#editbtn').prop('value','Join this Community');
+					});
+				}
+		});
+	
+	});
+</script>
+<?php get_footer(); ?>
